@@ -3,3 +3,15 @@ main {
     display: flex;
     justify-content: center;
 }
+
+button, .button {
+    padding: 0.25rem 1rem;
+    border: none;
+    border-radius: 0.4rem;
+    cursor: pointer;
+}
+
+.button--blue {
+    background-color: var(--bg-blue);
+    color: #FFFFFF;
+}
