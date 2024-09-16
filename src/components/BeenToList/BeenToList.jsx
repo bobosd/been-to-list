@@ -1,5 +1,6 @@
 import PlaceItem from "../PlaceItem/PlaceItem.jsx";
 import "./BeenToList.css";
+import {Button} from "@mui/material";
 
 const BeenToList = () => {
     const places = [
@@ -26,10 +27,12 @@ const BeenToList = () => {
     return (
         <div className={"been-to-list"}>
             <div className={"been-to-list__header"}>
+                <Button variant="outlined" size="small">Añadir lugar</Button>
             </div>
             <div className={"been-to-list__body"}>
                 {
-                    places.map((p) => <PlaceItem key={p.coordinates} country={p.country} city={p.city} coordinates={p.coordinates}
+                    places.map((p) => <PlaceItem key={p.coordinates} country={p.country} city={p.city}
+                                                 coordinates={p.coordinates}
                                                  visited={p.visited}/>)
                 }
             </div>

@@ -1,12 +1,17 @@
 .been-to-list {
     width: 65rem;
-    display: flex;
     border: 1px solid var(--border-gray);
     border-radius: 1rem;
     padding: 1.5rem;
     box-shadow: 0 0 0.3rem 0 rgba(210, 210, 210, 0.8);
 }
 
+.been-to-list__header {
+    margin-bottom: 1.5rem;
+}
+
 .been-to-list__body {
+    margin: 1.5rem 0;
+    border-top: 1px solid var(--border-gray);
     width: 100%;
 }
