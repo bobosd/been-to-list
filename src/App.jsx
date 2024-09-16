@@ -1,9 +1,12 @@
 import BeenToList from "./components/BeenToList/BeenToList.jsx";
+import "./App.css";
 
 const App = () => {
     return (
         <>
-            <BeenToList></BeenToList>
+            <main>
+                <BeenToList></BeenToList>
+            </main>
         </>
     );
 }

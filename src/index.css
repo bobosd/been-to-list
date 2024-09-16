@@ -1,8 +1,11 @@
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --border-gray: #d7dbdf;
+  --bg-blue: #1f88ff;
+  --bg-green: #5bc65a;
+  --bg-gray: #bdbdbd;
 }
 
 body {
   margin: 0;
-  display: flex;
 }

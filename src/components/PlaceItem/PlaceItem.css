@@ -1,0 +1,35 @@
+.place-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.2rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 0.5rem;
+}
+
+.place-item:hover {
+    background-color: var(--bg-blue);
+    color: #FFF;
+}
+
+.place-item > * {
+    width: 12rem;
+}
+
+.place-item__visited-flag::after {
+    padding: 0.1rem 1rem;
+    border-radius: 0.3rem;
+    font-size: 0.8rem;
+}
+
+.place-item--visited .place-item__visited-flag::after {
+    content: 'visitado';
+    background-color: var(--bg-green);
+    color: #FFFFFF;
+}
+
+.place-item--not-visited .place-item__visited-flag::after {
+    content: 'no visitado';
+    background-color: var(--bg-gray);
+    color: #000000;
+}
