@@ -8,8 +8,12 @@ este es una applicación de react que permite a usuarios gestionar los lugares q
 - Material UI
 - redux + redux toolkit
 
-## Instalación
+## Descargar
+
 [descargar código fuente o archivo dist](https://github.com/bobosd/been-to-list/releases)
+
+## Instalación
+
 Clonar el repositorio o descargue archivo zip de código fuente y ejecutar npm:
 
 ```
