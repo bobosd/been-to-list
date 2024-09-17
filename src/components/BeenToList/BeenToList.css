@@ -6,12 +6,26 @@
     box-shadow: 0 0 0.3rem 0 rgba(210, 210, 210, 0.8);
 }
 
+.been-to-list > div:last-child {
+    padding-bottom: 0 !important;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--border-gray);
+}
+
 .been-to-list__header {
     margin-bottom: 1.5rem;
 }
 
 .been-to-list__body {
-    margin: 1.5rem 0;
-    border-top: 1px solid var(--border-gray);
     width: 100%;
+}
+
+.been-to-list__body--empty {
+    font-size: 1.3rem;
+    width: max-content;
+    margin: auto;
+
 }

@@ -1,8 +1,4 @@
 .place-item {
-    display: flex;
-    justify-content: space-between;
-    margin: 0.2rem;
-    padding: 0.5rem;
     cursor: pointer;
     border-radius: 0.5rem;
 }
@@ -12,8 +8,8 @@
     color: #FFF;
 }
 
-.place-item > * {
-    width: 12rem;
+.b2l-body__th, .place-item {
+    padding: 0.3rem 1rem;
 }
 
 .place-item__visited-flag::after {

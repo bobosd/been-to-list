@@ -2,7 +2,7 @@ import PlaceItem from "../PlaceItem/PlaceItem.jsx";
 import "./BeenToList.css";
 import PlaceFormModal from "../PlaceFormModal/PlaceFormModal.jsx";
 import React from "react";
-import {Button} from "@mui/material";
+import {Button, Grid2} from "@mui/material";
 import {useSelector} from "react-redux";
 
 const BeenToList = () => {
@@ -18,21 +18,40 @@ const BeenToList = () => {
 
     return (
         <div className={"been-to-list"}>
+            <PlaceFormModal handleClose={handleClose} open={isModalOpened} place={selectedPlace}></PlaceFormModal>
             <div className={"been-to-list__header"}>
                 <Button variant="outlined" onClick={() => handleOpen()}>Añadir lugar</Button>
             </div>
             <div className={"been-to-list__body"}>
-                {
-                    places.length == null || places.length === 0 ?
-                        (
-                            <div>Lista vacía</div>
-                        ) :
-                        (
-                            places.map((p) => <PlaceItem key={p.id} place={p} clickEvent={() => handleOpen(p)} />)
-                        )
-                }
+                <div className={"b2l-body__th"}>
+                    <Grid2 container spacing={2}>
+                        <Grid2 size={3}>
+                            País
+                        </Grid2>
+                        <Grid2 size={3}>
+                            Ciudad
+                        </Grid2>
+                        <Grid2 size={3}>
+                            Coordenadas
+                        </Grid2>
+                        <Grid2 size={3}>
+                            Visitado
+                        </Grid2>
+                    </Grid2>
+                </div>
+                <hr/>
+                <div className={"b2l-body__tr"}>
+                    {
+                        places.length == null || places.length === 0 ?
+                            (
+                                <div className={"been-to-list__body--empty"}>Lista vacía</div>
+                            ) :
+                            (
+                                places.map((p) => <PlaceItem key={p.id} place={p} clickEvent={() => handleOpen(p)}/>)
+                            )
+                    }
+                </div>
             </div>
-            <PlaceFormModal handleClose={handleClose} open={isModalOpened} place={selectedPlace}></PlaceFormModal>
         </div>
     );
 };

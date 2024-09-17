@@ -1,14 +1,27 @@
 import PropTypes from "prop-types";
 import "./PlaceItem.css"
+import {Grid2} from "@mui/material";
 
 const PlaceItem = ({place, clickEvent}) => {
     const {country, city, latitude, longitude, visited} = place;
     return (
         <div onClick={clickEvent} className={`place-item ${visited? "place-item--visited" : "place-item--not-visited"}`}>
-            <div className={"place-item__country"}>{country}</div>
-            <div className={"place-item__city"}>{city}</div>
-            <div className={"place-item__coordinates"}>{latitude}, {longitude}</div>
-            <div className={"place-item__visited-flag"}></div>
+            <Grid2 container spacing={2}>
+                <Grid2 size={3}>
+                    <div className={"place-item__country"}>{country}</div>
+                </Grid2>
+                <Grid2 size={3}>
+                    <div className={"place-item__city"}>{city}</div>
+                </Grid2>
+                <Grid2 size={3}>
+                    <div className={"place-item__coordinates"}>{latitude}, {longitude}</div>
+                </Grid2>
+                <Grid2 size={3}>
+                    <div className={"place-item__visited-flag"}>
+
+                    </div>
+                </Grid2>
+            </Grid2>
         </div>
     );
 };
