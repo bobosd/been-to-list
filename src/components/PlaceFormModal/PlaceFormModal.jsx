@@ -17,27 +17,34 @@ const style = {
     borderRadius: '0.85rem'
 };
 
+const defaultPlace = {
+    country: "",
+    city: "",
+    latitude: null,
+    longitude: null,
+    visited: false
+};
+
+const defaultErrors = {
+    country: false,
+    city: false,
+    latitude: false,
+    longitude: false,
+}
+
 const PlaceFormModal = ({open, handleClose, place}) => {
     const [id, setId] = useState(0);
-    const [formData, setFormData] = useState({
-        country: "",
-        city: "",
-        latitude: NaN,
-        longitude: NaN,
-        visited: false
-    });
-    const [errors, setErrors] = useState({
-        country: false,
-        city: false,
-        latitude: false,
-        longitude: false,
-    });
+    const [formData, setFormData] = useState({...defaultPlace});
+    const [errors, setErrors] = useState({...defaultErrors});
 
     //initialize visited check
     useEffect(() => {
-        const visited = place ? place.visited : false;
-        setFormData((prevState) => {
-            return {...prevState, visited: visited};
+        const p = place ? {...place} : {...defaultPlace}
+        setFormData(() => {
+            return p;
+        });
+        setErrors(() => {
+            return {...defaultErrors};
         });
     }, [place]);
 
@@ -92,22 +99,44 @@ const PlaceFormModal = ({open, handleClose, place}) => {
         }
     };
 
+    //validation check before create & update
+    const validationCheck = () => {
+        let isValid = true;
+        for (let key in formData) {
+            if (formData[key] == null || formData[key].length < 1) {
+                setErrors(prevState => {
+                    return {...prevState, [key]: true};
+                });
+                isValid = false;
+            }
+        }
+        return isValid;
+    }
+
+    //reset input values and errors on modal close
+    const closeModal = () => {
+        setErrors(() => ({...defaultErrors}));
+        setFormData(() => ({...defaultPlace}));
+        console.log(errors);
+        handleClose();
+    }
+
     //handle visited check
     const handleVisited = () => {
         setFormData((prevState) => {
             return {...prevState, visited: !prevState.visited};
         });
-    }
+    };
 
     //redux
     const reduxDispatch = useDispatch();
     const handleAddPlace = () => {
         const hasError = Object.values(errors).some((err) => err);
-        if (hasError) return;
+        if (hasError || !validationCheck()) return;
         const newPlace = {...formData, id: id};
         reduxDispatch(addPlace(newPlace));
         setId(id + 1);
-        handleClose();
+        closeModal();
     };
 
     const handleUpdatePlace = () => {
@@ -115,15 +144,13 @@ const PlaceFormModal = ({open, handleClose, place}) => {
         if (hasError) return;
         const updatedPlace = {...formData, id: place.id}
         reduxDispatch(updatePlace(updatedPlace));
-        handleClose();
+        closeModal();
     }
 
     const handleRemovePlace = () => {
         reduxDispatch(removePlace(place.id));
-        handleClose();
+        closeModal();
     }
-
-    console.log(errors);
     return (
         <>
             <div>
