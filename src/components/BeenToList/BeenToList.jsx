@@ -7,31 +7,14 @@ import {useSelector} from "react-redux";
 
 const BeenToList = () => {
     const [isModalOpened, setIsModalOpened] = React.useState(false);
-    const handleOpen = () => setIsModalOpened(true);
+    const [selectedPlace, setSelectedPlace] = React.useState(null);
+
+    const handleOpen = (place = null) => {
+        setSelectedPlace(place);
+        setIsModalOpened(true);
+    };
     const handleClose= () => setIsModalOpened(false);
     const places = useSelector((state) => state.places);
-    /*
-    const places = [
-        {
-            country: "US",
-            city: "California",
-            coordinates: [36.778, -199.417],
-            visited: false,
-        },
-        {
-            country: "France",
-            city: "Paris",
-            coordinates: [48.8534951, 2.3483915],
-            visited: false,
-        },
-        {
-            country: "Spain",
-            city: "Barcelona",
-            coordinates: [41.3828939, 2.1774322],
-            visited: true,
-        }
-    ];
-     */
 
     return (
         <div className={"been-to-list"}>
@@ -45,11 +28,11 @@ const BeenToList = () => {
                             <div>Lista vacía</div>
                         ) :
                         (
-                            places.map((p) => <PlaceItem key={p.id} place={p}/>)
+                            places.map((p) => <PlaceItem key={p.id} place={p} clickEvent={() => handleOpen(p)} />)
                         )
                 }
             </div>
-            <PlaceFormModal handleClose={handleClose} open={isModalOpened}></PlaceFormModal>
+            <PlaceFormModal handleClose={handleClose} open={isModalOpened} place={selectedPlace}></PlaceFormModal>
         </div>
     );
 };

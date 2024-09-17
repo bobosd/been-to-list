@@ -3,7 +3,7 @@ import {Box, Button, Checkbox, FormControlLabel, Grid2, Modal, TextField} from "
 import "./PlaceFormModal.css";
 import {useRef, useState} from "react";
 import {useDispatch} from "react-redux";
-import {addPlace} from "../../redux/slices/placeSlice.jsx";
+import {addPlace, updatePlace, removePlace} from "../../redux/slices/placeSlice.jsx";
 
 const style = {
     position: 'absolute',
@@ -19,7 +19,7 @@ const style = {
 
 const PlaceFormModal = ({open, handleClose, place}) => {
     const [id, setId] = useState(0);
-    const [visited, setVisited] = useState(place ? place.visited : false);
+    let [visited, setVisited] = useState(place ? place.visited : false);
 
     const inputCountry = useRef(null);
     const inputCity = useRef(null);
@@ -28,19 +28,34 @@ const PlaceFormModal = ({open, handleClose, place}) => {
 
     const reduxDispatch = useDispatch();
 
-    const handleAddPlace = () => {
+    const collectFormData = () => {
         const latitude = parseFloat(inputLatitude.current.value);
         const longitude = parseFloat(inputLongitude.current.value);
-        const place = {
-            id: id,
+        return {
             country: inputCountry.current.value,
             city: inputCountry.current.value,
             coordinates: [latitude, longitude],
             visited: visited
-        }
-        reduxDispatch(addPlace(place));
+        };
+    }
+
+    const handleAddPlace = () => {
+        const newPlace = {...collectFormData(), id: id};
+        reduxDispatch(addPlace(newPlace));
         setId(id + 1);
+        handleClose();
     };
+
+    const handleUpdatePlace = () => {
+        const updatedPlace = {...collectFormData(), id: place.id}
+        reduxDispatch(updatePlace(updatedPlace));
+        handleClose();
+    }
+
+    const handleRemovePlace = () => {
+        reduxDispatch(removePlace(place.id));
+        handleClose();
+    }
 
     return (
         <>
@@ -57,22 +72,26 @@ const PlaceFormModal = ({open, handleClose, place}) => {
                         <div className={"place-modal__body"}>
                             <Grid2 container spacing={2}>
                                 <Grid2 size={6}>
-                                    <TextField required label="País" size="small" inputRef={inputCountry}></TextField>
+                                    <TextField required label="País" size="small" inputRef={inputCountry}
+                                               defaultValue={place ? place.country : ""}></TextField>
                                 </Grid2>
                                 <Grid2 size={6}>
-                                    <TextField required label="Ciudad" size="small" inputRef={inputCity}></TextField>
+                                    <TextField required label="Ciudad" size="small" inputRef={inputCity}
+                                               defaultValue={place ? place.city : ""}></TextField>
                                 </Grid2>
                                 <Grid2 size={6}>
                                     <TextField required label="Latitud" size="small"
-                                               inputRef={inputLatitude}></TextField>
+                                               inputRef={inputLatitude}
+                                               defaultValue={place ? place.coordinates[0] : ""}></TextField>
                                 </Grid2>
                                 <Grid2 size={6}>
                                     <TextField required label="Longitud" size="small"
-                                               inputRef={inputLongitude}></TextField>
+                                               inputRef={inputLongitude}
+                                               defaultValue={place ? place.coordinates[1] : ""}></TextField>
                                 </Grid2>
                             </Grid2>
                             <FormControlLabel
-                                control={<Checkbox size="small" checked={visited}
+                                control={<Checkbox size="small" defaultChecked={place? place.visited: false}
                                                    onChange={() => setVisited(!visited)}/>}
                                 label="Visitado"/>
                         </div>
@@ -80,8 +99,8 @@ const PlaceFormModal = ({open, handleClose, place}) => {
                             {
                                 place ?
                                     (<>
-                                        <Button variant="outlined" size="small">Actualizar</Button>
-                                        <Button variant="outlined" size="small" color="error">Eliminar</Button>
+                                        <Button variant="outlined" size="small" onClick={handleUpdatePlace}>Actualizar</Button>
+                                        <Button variant="outlined" size="small" color="error" onClick={handleRemovePlace}>Eliminar</Button>
                                     </>) :
                                     (
                                         <Button variant="outlined" size="small" onClick={handleAddPlace}>Crear</Button>
