@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import {Box, Button, Checkbox, FormControlLabel, Grid2, Modal, TextField} from "@mui/material";
 import "./PlaceFormModal.css";
-import {useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {addPlace, updatePlace, removePlace} from "../../redux/slices/placeSlice.jsx";
 
@@ -19,35 +19,101 @@ const style = {
 
 const PlaceFormModal = ({open, handleClose, place}) => {
     const [id, setId] = useState(0);
-    let [visited, setVisited] = useState(place ? place.visited : false);
+    const [formData, setFormData] = useState({
+        country: "",
+        city: "",
+        latitude: NaN,
+        longitude: NaN,
+        visited: false
+    });
+    const [errors, setErrors] = useState({
+        country: false,
+        city: false,
+        latitude: false,
+        longitude: false,
+    });
 
-    const inputCountry = useRef(null);
-    const inputCity = useRef(null);
-    const inputLatitude = useRef(0.0);
-    const inputLongitude = useRef(0.0);
+    //initialize visited check
+    useEffect(() => {
+        const visited = place ? place.visited : false;
+        setFormData((prevState) => {
+            return {...prevState, visited: visited};
+        });
+    }, [place]);
 
-    const reduxDispatch = useDispatch();
-
-    const collectFormData = () => {
-        const latitude = parseFloat(inputLatitude.current.value);
-        const longitude = parseFloat(inputLongitude.current.value);
-        return {
-            country: inputCountry.current.value,
-            city: inputCountry.current.value,
-            coordinates: [latitude, longitude],
-            visited: visited
-        };
+    //handle form text & validation
+    const handleTextInput = (e) => {
+        const {name, value} = e.target;
+        setFormData((prevState) => {
+            return {...prevState, [name]: value};
+        });
+        validateHasText(name, value);
+    }
+    const validateHasText = (name, value) => {
+        if (value == null || value.trim().length < 1) {
+            setErrors((prevState) => {
+                return {...prevState, [name]: true}
+            });
+        } else {
+            setErrors((prevState) => {
+                return {...prevState, [name]: false}
+            });
+        }
     }
 
+    //handle form number & validation
+    const handleNumberInput = (e) => {
+        let {name, value} = e.target;
+        value = parseFloat(value);
+        setFormData((prevState) => {
+            return {...prevState, [name]: value};
+        });
+        validateNumber(name, value);
+    }
+    const validateNumber = (name, value) => {
+        if (value == null || isNaN(value)) {
+            setErrors((prevState) => {
+                return {...prevState, [name]: true}
+            });
+            return;
+        }
+
+        if (
+            (name === "latitude" && (value >= 90 || value <= -90)) ||
+            (name === "longitude" && (value >= 180 || value <= -180))
+        ) {
+            setErrors((prevState) => {
+                return {...prevState, [name]: true}
+            });
+        } else {
+            setErrors((prevState) => {
+                return {...prevState, [name]: false}
+            });
+        }
+    };
+
+    //handle visited check
+    const handleVisited = () => {
+        setFormData((prevState) => {
+            return {...prevState, visited: !prevState.visited};
+        });
+    }
+
+    //redux
+    const reduxDispatch = useDispatch();
     const handleAddPlace = () => {
-        const newPlace = {...collectFormData(), id: id};
+        const hasError = Object.values(errors).some((err) => err);
+        if (hasError) return;
+        const newPlace = {...formData, id: id};
         reduxDispatch(addPlace(newPlace));
         setId(id + 1);
         handleClose();
     };
 
     const handleUpdatePlace = () => {
-        const updatedPlace = {...collectFormData(), id: place.id}
+        const hasError = Object.values(errors).some((err) => err);
+        if (hasError) return;
+        const updatedPlace = {...formData, id: place.id}
         reduxDispatch(updatePlace(updatedPlace));
         handleClose();
     }
@@ -57,6 +123,7 @@ const PlaceFormModal = ({open, handleClose, place}) => {
         handleClose();
     }
 
+    console.log(errors);
     return (
         <>
             <div>
@@ -72,35 +139,39 @@ const PlaceFormModal = ({open, handleClose, place}) => {
                         <div className={"place-modal__body"}>
                             <Grid2 container spacing={2}>
                                 <Grid2 size={6}>
-                                    <TextField required label="País" size="small" inputRef={inputCountry}
+                                    <TextField required label="País" size="small" onChange={handleTextInput}
+                                               error={errors.country} name="country"
                                                defaultValue={place ? place.country : ""}></TextField>
                                 </Grid2>
                                 <Grid2 size={6}>
-                                    <TextField required label="Ciudad" size="small" inputRef={inputCity}
+                                    <TextField required label="Ciudad" size="small" name="city"
+                                               error={errors.city} onChange={handleTextInput}
                                                defaultValue={place ? place.city : ""}></TextField>
                                 </Grid2>
                                 <Grid2 size={6}>
-                                    <TextField required label="Latitud" size="small"
-                                               inputRef={inputLatitude}
-                                               defaultValue={place ? place.coordinates[0] : ""}></TextField>
+                                    <TextField required label="Latitud" size="small" name="latitude"
+                                               error={errors.latitude} onChange={handleNumberInput}
+                                               defaultValue={place ? place.latitude : ""}></TextField>
                                 </Grid2>
                                 <Grid2 size={6}>
-                                    <TextField required label="Longitud" size="small"
-                                               inputRef={inputLongitude}
-                                               defaultValue={place ? place.coordinates[1] : ""}></TextField>
+                                    <TextField required label="Longitud" size="small" name="longitude"
+                                               error={errors.longitude} onChange={handleNumberInput}
+                                               defaultValue={place ? place.longitude : ""}></TextField>
                                 </Grid2>
                             </Grid2>
                             <FormControlLabel
-                                control={<Checkbox size="small" defaultChecked={place? place.visited: false}
-                                                   onChange={() => setVisited(!visited)}/>}
+                                control={<Checkbox size="small" defaultChecked={place ? place.visited : false}
+                                                   onChange={handleVisited}/>}
                                 label="Visitado"/>
                         </div>
                         <div className={"place-modal__footer"}>
                             {
                                 place ?
                                     (<>
-                                        <Button variant="outlined" size="small" onClick={handleUpdatePlace}>Actualizar</Button>
-                                        <Button variant="outlined" size="small" color="error" onClick={handleRemovePlace}>Eliminar</Button>
+                                        <Button variant="outlined" size="small"
+                                                onClick={handleUpdatePlace}>Actualizar</Button>
+                                        <Button variant="outlined" size="small" color="error"
+                                                onClick={handleRemovePlace}>Eliminar</Button>
                                     </>) :
                                     (
                                         <Button variant="outlined" size="small" onClick={handleAddPlace}>Crear</Button>
@@ -121,7 +192,8 @@ PlaceFormModal.propTypes = {
         id: PropTypes.number.isRequired,
         country: PropTypes.string.isRequired,
         city: PropTypes.string.isRequired,
-        coordinates: PropTypes.arrayOf(PropTypes.number).isRequired,
+        latitude: PropTypes.number,
+        longitude: PropTypes.number,
         visited: PropTypes.bool.isRequired,
     })
 };
