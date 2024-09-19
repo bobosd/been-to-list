@@ -19,6 +19,14 @@ hr {
     margin-bottom: 1.5rem;
 }
 
+.been-to-list__header > button {
+    margin-right: 1rem;
+}
+
+.been-to-list__header > button:last-child {
+    margin-right: 0;
+}
+
 .been-to-list__body {
     width: 100%;
 }

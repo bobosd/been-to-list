@@ -8,19 +8,36 @@ import {useSelector} from "react-redux";
 const BeenToList = () => {
     const [isModalOpened, setIsModalOpened] = React.useState(false);
     const [selectedPlace, setSelectedPlace] = React.useState(null);
+    const places = useSelector((state) => state.places);
 
-    const handleOpen = (place = null) => {
+    const handleOpenModal = (place = null) => {
         setSelectedPlace(place);
         setIsModalOpened(true);
     };
+
+    const handleOpenMap = () => {
+        const visitedPlaces = places
+            .filter((p => p.visited))
+            .map((p) => {
+                return {
+                    city: p.city,
+                    coor: [p.latitude, p.longitude],
+                };
+            });
+        const encodedPlace = encodeURIComponent(JSON.stringify(visitedPlaces));
+        const newWindow = window.open("/map.html?places=" + encodedPlace, "newWindow", "width=600,height=350");
+        newWindow.opener.postMessage({key: 'value'}, '*');
+    }
+
     const handleClose= () => setIsModalOpened(false);
-    const places = useSelector((state) => state.places);
+
 
     return (
         <div className={"been-to-list"}>
             <PlaceFormModal handleClose={handleClose} open={isModalOpened} place={selectedPlace}></PlaceFormModal>
             <div className={"been-to-list__header"}>
-                <Button variant="outlined" onClick={() => handleOpen()}>Añadir lugar</Button>
+                <Button variant="outlined" onClick={() => handleOpenModal()}>Añadir lugar</Button>
+                <Button variant="outlined" onClick={handleOpenMap}>Mapa visitados</Button>
             </div>
             <div className={"been-to-list__body"}>
                 <div className={"b2l-body__th"}>
@@ -47,7 +64,8 @@ const BeenToList = () => {
                                 <div className={"been-to-list__body--empty"}>Lista vacía</div>
                             ) :
                             (
-                                places.map((p) => <PlaceItem key={p.id} place={p} clickEvent={() => handleOpen(p)}/>)
+                                places.map((p) => <PlaceItem key={p.id} place={p}
+                                                             clickEvent={() => handleOpenModal(p)}/>)
                             )
                     }
                 </div>
