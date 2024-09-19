@@ -117,7 +117,6 @@ const PlaceFormModal = ({open, handleClose, place}) => {
     const closeModal = () => {
         setErrors(() => ({...defaultErrors}));
         setFormData(() => ({...defaultPlace}));
-        console.log(errors);
         handleClose();
     }
 
